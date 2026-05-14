@@ -1,20 +1,6 @@
 from manim_imports_ext import *
 
 
-# ── Configuration ─────────────────────────────────────────────────────────────
-
-ANGLE_A = 20   # degrees
-ANGLE_B = 80   # degrees
-ANGLE_C = 80   # degrees
-
-COLOR_TRIANGLE   = WHITE
-COLOR_VERTEX     = YELLOW
-COLOR_ANGLE_A    = RED_C
-COLOR_ANGLE_B    = BLUE_C
-COLOR_ANGLE_C    = TEAL_C
-COLOR_EQUAL_TICK = GREEN_B
-COLOR_BASE_TICK  = ORANGE
-
 
 # ── Geometry helpers ──────────────────────────────────────────────────────────
 
@@ -52,27 +38,37 @@ def tick_mark(p1, p2, n=1, size=0.15, color=WHITE, gap=0.08):
         )
     return marks
 
-def AngleTriangle(base_length, angle_A_degrees, angle_B_degrees):
+def vertex_dot(point, radius=0.07, color=WHITE):
+    """Return a Dot at the given vertex point."""
+    return Dot(point, radius=radius, color=color)
+
+
+def AngleTriangle(base_length, angle_A_degrees, angle_B_degrees, vertex_dots=False):
     # Convert angles from degrees to radians for Python's math functions
     alpha = math.radians(angle_A_degrees)
     beta = math.radians(angle_B_degrees)
-    
+
     # Point A is the bottom left, Point B is the bottom right
     A = ORIGIN
     B = RIGHT * base_length
-    
+
     # Calculate the X and Y coordinates for the top point (C)
     # Using the intersection of two lines based on the tangent of the angles
     tan_alpha = math.tan(alpha)
     tan_beta = math.tan(beta)
-    
+
     c_x = (base_length * tan_beta) / (tan_alpha + tan_beta)
     c_y = c_x * tan_alpha
-    
+
     C = np.array([c_x, c_y, 0])
-    
-    # Return a custom Polygon using these three points
-    return Polygon(A, B, C)
+
+    polygon = Polygon(A, B, C)
+
+    if vertex_dots:
+        dots = VGroup(vertex_dot(A), vertex_dot(B), vertex_dot(C))
+        return VGroup(polygon, dots)
+
+    return polygon
 
 # ── Scene ─────────────────────────────────────────────────────────────────────
 
@@ -85,7 +81,7 @@ class IsoscelesTriangle(InteractiveScene):
 
     def construct(self):
         # Create our triangle
-        my_triangle = AngleTriangle(base_length=2.0, angle_A_degrees=80, angle_B_degrees=80)
+        my_triangle = AngleTriangle(base_length=2.0, angle_A_degrees=80, angle_B_degrees=80, vertex_dots=True)
         my_triangle.move_to(ORIGIN)
         
         # 1. NO FILL COLOR: Set the outline stroke, but keep fill opacity at 0
@@ -94,7 +90,8 @@ class IsoscelesTriangle(InteractiveScene):
         
         # 2. ADD LABELS:
         # Get the list of the three coordinate points [Point A, Point B, Point C]
-        vertices = my_triangle.get_vertices()
+        polygon = my_triangle[0] if isinstance(my_triangle, VGroup) else my_triangle
+        vertices = polygon.get_vertices()
         A = vertices[0]
         C = vertices[1]
         B = vertices[2]
@@ -108,8 +105,8 @@ class IsoscelesTriangle(InteractiveScene):
         label_C = Tex("C").next_to(C, DR,  buff=0.12)
         # label_C.set_color(BLUE)
 
-        ticks_AB = tick_mark(A, B, n=3, color=COLOR_EQUAL_TICK)
-        ticks_BC = tick_mark(B, C, n=3, color=COLOR_EQUAL_TICK)
+        ticks_AB = tick_mark(A, B, n=2, color=GREEN)
+        ticks_BC = tick_mark(B, C, n=2, color=GREEN)
 
         tick_marks = VGroup(ticks_AB, ticks_BC)
         
@@ -129,33 +126,9 @@ class IsoscelesTriangle(InteractiveScene):
             run_time=0.8,
         )
 
-        self.play(triangle_label.animate.shift(LEFT*5.5), run_time=1.5)
-        self.wait()
+        # self.play(triangle_label.animate.shift(LEFT*5.5), run_time=1.5)
+        # self.wait()
 
-        # # base_len kept small because tan(80°)≈5.67 makes height very large
-        # A, B, C = build_isosceles_vertices(base_len=2.2, base_angle_deg=ANGLE_B)
-
-        # # Push base down close to the bottom edge; apex lands around y≈2.9
-        # shift = DOWN * 3.2
-        # A, B, C = A + shift, B + shift, C + shift
-
-        # # ─── Problem title ────────────────────────────────────────────────────
-        # title = Text("Isosceles Triangle", font_size=42)
-        # title.to_edge(UP, buff=0.25)
-
-        # # problem = VGroup(
-        # #     Text("Given:", font_size=27, color=GREY_A),
-        # #     Text("AB = AC,   ∠B = ∠C = 80°,   ∠A = 20°", font_size=27),
-        # # ).arrange(RIGHT, buff=0.25)
-        # # problem.next_to(title, DOWN, buff=0.18)
-
-        # self.play(Write(title), run_time=0.7)
-        # # self.play(FadeIn(problem, shift=UP * 0.2), run_time=0.6)
-        # self.wait(0.3)
-
-        # # ─── Step 1 – Draw base BC ────────────────────────────────────────────
-        # # step1 = Text("Step 1: Draw base BC", font_size=25, color=GREY_B)
-        # # step1.to_corner(DR).shift(UP * 0.1)
 
         # base_line = Line(B, C, stroke_color=COLOR_TRIANGLE, stroke_width=3)
 
