@@ -1,0 +1,51 @@
+# Old year folders (Grant's original content, not part of this project)
+_2015/
+_2016/
+_2017/
+_2018/
+_2019/
+_2020/
+_2021/
+_2022/
+_2023/
+_2024/
+_2025/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Manim output
+videos/
+media/
+images/raster/
+images/vector/
+*.mp4
+*.mov
+*.avi
+*.gif
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.swp
+*.swo
+
+# Environment
+.env
+.venv
+env/
+venv/
