@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from manim_imports_ext import *
-from _2025.hairy_ball.spheres import fibonacci_sphere
-from _2025.hairy_ball.spheres import get_sphereical_vector_field
+from _2026.hairy_ball.spheres import fibonacci_sphere
+from _2026.hairy_ball.spheres import get_sphereical_vector_field
 
 from typing import TYPE_CHECKING
 
@@ -31,52 +31,38 @@ def get_position_vectors(trajectory, prop, d_prop=1e-4, use_curvature=False):
     return (p1, heading, wing_vect)
 
 
-class S3Viking(TexturedGeometry):
+class S3Viking(VGroup):
+    """Placeholder wireframe aircraft (s3_viking/s3.obj model not available)."""
     offset = np.array([-0.2, 0, 0.2])
 
     def __init__(self, height=1):
-        full_model = ThreeDModel("s3_viking/s3.obj")
-        plane = full_model[-1]
-        super().__init__(plane.geometry, plane.texture_file)
-        self.set_height(height)
+        h = height
+        # Canonical orientation: nose → +x, wings → ±y, top → +z
+        body = Line(np.array([-0.35 * h, 0, 0]), np.array([0.35 * h, 0, 0]))
+        wings = Line(np.array([0.05 * h, -0.28 * h, 0]), np.array([0.05 * h, 0.28 * h, 0]))
+        tail_fin = Line(np.array([-0.30 * h, 0, 0]), np.array([-0.30 * h, 0, 0.15 * h]))
+        super().__init__(body, wings, tail_fin)
+        self.set_stroke(GREY_B, 2)
         self.apply_depth_test()
-        self.rotate(PI).rotate(PI / 2, LEFT)
-
-        # Trim, a bit hacky
-        tube_index = 38_950
-        idx = self.triangle_indices
-        idx = idx[idx < tube_index]
-        idx = idx[:-(len(idx) % 3)]
-        self.triangle_indices = idx
-
-        self.data = self.data[:tube_index]
-        self.note_changed_data()
-        self.refresh_bounding_box()
-        self.move_to(height * self.offset)
-
-        # Remoember position
-        self.initial_points = self.get_points().copy()
+        self._rot_mat = np.eye(3)
 
     def reposition(self, center, heading, wing_vect):
         unit_heading = normalize(heading)
         roof_vect = normalize(np.cross(heading, wing_vect))
         true_wing = normalize(np.cross(roof_vect, heading))
-        rot_mat_T = np.array([unit_heading, true_wing, roof_vect])
-
-        self.set_points(np.dot(self.initial_points, rot_mat_T) + center)
+        new_rot = np.array([unit_heading, true_wing, roof_vect]).T
+        delta_rot = new_rot @ self._rot_mat.T
+        self.apply_matrix(delta_rot, about_point=self.get_center())
+        self.move_to(center)
+        self._rot_mat = new_rot
 
     def place_on_path(self, trajectory, prop, use_curvature=False):
         self.reposition(*get_position_vectors(trajectory, prop, use_curvature=use_curvature))
 
     def set_partial(self, a, b):
-        # Eh, no good
-        opacities = self.data["opacity"].flatten()
-        low_index = int(a * len(opacities))
-        high_index = int(b * len(opacities))
-        opacities[:] = 1
-        opacities[:low_index] = 0
-        opacities[high_index:] = 0
-        self.set_opacity(opacities)
+        return self
+
+    def always_sort_to_camera(self, camera):
         return self
 
 
