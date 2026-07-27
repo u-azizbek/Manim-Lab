@@ -12,3 +12,4 @@ from custom.end_screen import *
 from custom.filler import *
 from custom.logo import *
 from custom.opening_quote import *
+from custom.shorts import *
