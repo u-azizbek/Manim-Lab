@@ -56,10 +56,10 @@ class SubfactorialLimit(ShortsScene):
         expr.set_width(5.5)
         expr.move_to(1.0 * UP)
 
-        tease = Text("Subfactorial Limit", font_size=44, color=GREY_A)
+        tease = Text("Subfactorial Limit", font_size=44).set_color(GREY_A)
         tease.next_to(expr, UP, buff=1.4)
 
-        question = Text("Does this even converge?", font_size=44, color=RESULT_COLOR)
+        question = Text("Does this even converge?", font_size=44).set_color(RESULT_COLOR)
         question.set_width(6.5)
         question.next_to(expr, DOWN, buff=1.4)
 
@@ -135,7 +135,7 @@ class SubfactorialLimit(ShortsScene):
         good.target.arrange(RIGHT, buff=1.0)
         good.target.next_to(example, DOWN, buff=0.9)
 
-        count = Tex(R"!3 = 2", font_size=60, color=SUB_COLOR)
+        count = Tex(R"!3 = 2", font_size=60).set_color(SUB_COLOR)
         count.next_to(good.target, DOWN, buff=0.9)
 
         self.play(
@@ -177,7 +177,7 @@ class SubfactorialLimit(ShortsScene):
         ratio_box = SurroundingRectangle(ratio_row, color=RESULT_COLOR, buff=0.2)
         ratio_box.set_stroke(width=2)
 
-        closing_in = Tex(R"\longrightarrow\ 2.718 \ldots ?", font_size=52, color=RESULT_COLOR)
+        closing_in = Tex(R"\longrightarrow\ 2.718 \ldots ?", font_size=52).set_color(RESULT_COLOR)
         closing_in.next_to(ratio_box, DOWN, buff=0.9)
 
         self.play(
@@ -224,8 +224,8 @@ class SubfactorialLimit(ShortsScene):
         reason = TexText(
             R"since $e^x = \sum_k x^k/k!$ \, at \, $x = -1$",
             font_size=36,
-            color=GREY_B,
         )
+        reason.set_color(GREY_B)
         reason.set_width(6.2)
         reason.next_to(series, DOWN, buff=0.5)
 

@@ -51,7 +51,7 @@ class MatrixPower2024(ShortsScene):
         return self.lazy("key_eq", self.make_key_eq)
 
     def make_punchline(self):
-        punchline = Tex(R"A^{2024} = A^2", font_size=72, color=RESULT_COLOR)
+        punchline = Tex(R"A^{2024} = A^2", font_size=72).set_color(RESULT_COLOR)
         group = VGroup(
             punchline,
             SurroundingRectangle(punchline, color=RESULT_COLOR, buff=0.25),
@@ -64,7 +64,7 @@ class MatrixPower2024(ShortsScene):
     # Sections
 
     def show_problem(self):
-        title = Text("A 2024th Power", font_size=54, color=A_COLOR)
+        title = Text("A 2024th Power", font_size=54).set_color(A_COLOR)
         self.pin_to_top(title, buff=1.5)
         underline = Underline(title, stroke_color=A_COLOR)
 
@@ -103,7 +103,7 @@ class MatrixPower2024(ShortsScene):
         )
         brute.set_width(6.8)
 
-        better = Text("But there is a pattern hiding here.", font_size=34, color=GREY_A)
+        better = Text("But there is a pattern hiding here.", font_size=34).set_color(GREY_A)
         better.set_width(6.5)
 
         VGroup(brute, better).arrange(DOWN, buff=1.4).move_to(0.5 * UP)
@@ -122,7 +122,7 @@ class MatrixPower2024(ShortsScene):
         )
 
     def apply_cayley_hamilton(self):
-        name = Text("Cayley–Hamilton", font_size=40, color=A_COLOR)
+        name = Text("Cayley–Hamilton", font_size=40).set_color(A_COLOR)
         name.next_to(self.get_header(), DOWN, buff=0.7)
         name_box = SurroundingRectangle(name, color=A_COLOR, buff=0.2)
         name_box.set_stroke(width=2)
@@ -261,7 +261,7 @@ class MatrixPower2024(ShortsScene):
             run_time=0.55,
         )
 
-        period = Text("Back to the start every 6 steps", font_size=34, color=RESULT_COLOR)
+        period = Text("Back to the start every 6 steps", font_size=34).set_color(RESULT_COLOR)
         period.set_width(6.5)
         period.next_to(circle, DOWN, buff=1.2)
 
@@ -343,7 +343,7 @@ class MatrixPower2024(ShortsScene):
         )
         self.wait(0.4)
 
-        answer = Tex(R"= -7", font_size=88, color=RESULT_COLOR)
+        answer = Tex(R"= -7", font_size=88).set_color(RESULT_COLOR)
         answer.next_to(sum_eq, DOWN, buff=0.8)
         answer_box = SurroundingRectangle(answer, color=RESULT_COLOR, buff=0.3)
         answer_box.set_stroke(width=4)
