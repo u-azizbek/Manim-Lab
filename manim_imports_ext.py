@@ -13,3 +13,4 @@ from custom.filler import *
 from custom.logo import *
 from custom.opening_quote import *
 from custom.shorts import *
+from custom.split_screen import *
