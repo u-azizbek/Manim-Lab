@@ -23,7 +23,7 @@ class SumSquaresRatio(SplitScreenScene):
             Tex(R"\sum_{k=1}^{n} k^2 = \frac{n(n+1)(2n+1)}{6}", font_size=40),
             Tex(R"\Big(\sum_{k=1}^{n} k\Big)^2 = \frac{n^2(n+1)^2}{4}", font_size=40),
             Tex(
-                R"\text{ratio} = \frac{2(2n+1)}{3n(n+1)} \longrightarrow 0",
+                R"\text{ratio} = \lim_{n \to \infty} \frac{2(2n+1)}{3n(n+1)} \longrightarrow 0",
                 font_size=42,
             ).set_color(self.result_color),
         ]
@@ -31,15 +31,15 @@ class SumSquaresRatio(SplitScreenScene):
     def pro_lines(self):
         return [
             Tex(
-                R"\frac{1}{n}\sum \Big(\tfrac{k}{n}\Big)^2 \longrightarrow \int_0^1 x^2\,dx = \tfrac{1}{3}",
+                R"\frac{1}{n}\sum_{k=1}^{n} \Big(\tfrac{k}{n}\Big)^2 \longrightarrow \int_0^1 x^2\,dx = \tfrac{1}{3}",
                 font_size=38,
             ),
             Tex(
-                R"\frac{1}{n}\sum \tfrac{k}{n} \longrightarrow \int_0^1 x\,dx = \tfrac{1}{2}",
+                R"\frac{1}{n}\sum_{k=1}^{n} \tfrac{k}{n} \longrightarrow \int_0^1 x\,dx = \tfrac{1}{2}",
                 font_size=38,
             ),
             Tex(
-                R"\frac{n^3 \cdot \frac{1}{3}}{\big(n^2 \cdot \frac{1}{2}\big)^2} = \frac{4}{3n} \longrightarrow 0",
+                R"\frac{n^3 \cdot \frac{1}{3}}{\big(n^2 \cdot \frac{1}{2}\big)^2} = \lim_{n \to \infty} \frac{4}{3n} \longrightarrow 0",
                 font_size=40,
             ).set_color(self.result_color),
         ]
