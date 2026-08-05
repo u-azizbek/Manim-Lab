@@ -71,12 +71,15 @@ class NoobVsPro(PowerSumRatio):
         return self.riemann_lines()
 
 
-class ProVsExpert(PowerSumRatio):
+class ProVsExpert(BrandOutroMixin, PowerSumRatio):
     beginner_label = "PRO"
     pro_label = "EXPERT"
     beginner_color = PRO_COLOR
     pro_color = EXPERT_COLOR
     verdict = "No formula, no integral"
+
+    # The branded tail; drop "outro" to render without it
+    sections = SplitScreenScene.sections + ["outro"]
 
     def beginner_lines(self):
         return self.riemann_lines()
