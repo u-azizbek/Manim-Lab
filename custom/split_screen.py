@@ -76,9 +76,10 @@ class SplitScreenScene(ShortsScene):
     problem_color = WHITE
     result_color = YELLOW
     problem_max_width = 6.9
-    panel_width = 7.0
+    panel_width = 7.2
     panel_height = 4.1
-    line_buff = 0.42
+    panel_pad = 0.18   # keep the boxes tight; space inside is scarce
+    line_buff = 0.40
 
     sections = ["arena", "solve_beginner", "solve_pro", "conclude"]
 
@@ -102,11 +103,11 @@ class SplitScreenScene(ShortsScene):
 
         beginner = LabeledPanel(
             self.beginner_label, self.beginner_color,
-            self.panel_width, self.panel_height,
+            self.panel_width, self.panel_height, pad=self.panel_pad,
         )
         pro = LabeledPanel(
             self.pro_label, self.pro_color,
-            self.panel_width, self.panel_height,
+            self.panel_width, self.panel_height, pad=self.panel_pad,
         )
 
         column = VGroup(problem, beginner, pro)
@@ -122,9 +123,11 @@ class SplitScreenScene(ShortsScene):
         return self.lazy("layout", self.make_layout)
 
     def layout_lines(self, lines: VGroup, panel: LabeledPanel, align=LEFT) -> VGroup:
+        # Cap each line on its own first, so one wide formula does not shrink
+        # every other line with it
+        for line in lines:
+            line.set_max_width(panel.inner_width)
         lines.arrange(DOWN, buff=self.line_buff, aligned_edge=align)
-        if lines.get_width() > panel.inner_width:
-            lines.set_width(panel.inner_width)
         if lines.get_height() > panel.inner_height:
             lines.set_height(panel.inner_height)
         lines.move_to(panel.rect)
