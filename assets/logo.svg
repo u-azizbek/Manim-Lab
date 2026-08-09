@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 210 120"
+   width="210"
+   height="120"
+   version="1.1"
+   id="svg25"
+   sodipodi:docname="logo.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview25"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="2.9188398"
+     inkscape:cx="143.37888"
+     inkscape:cy="60.469231"
+     inkscape:window-width="1792"
+     inkscape:window-height="1120"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g18" />
+  <defs
+     id="defs2">
+    <!--
+      Single gradient spanning the full viewBox so the N (left) renders dark
+      and the neural-E (right) renders lighter, matching the reference image.
+    -->
+    <linearGradient
+       id="grad"
+       gradientUnits="userSpaceOnUse"
+       x1="0"
+       y1="0"
+       x2="210"
+       y2="120">
+      <stop
+         offset="0%"
+         stop-color="#5B21B6"
+         id="stop1" />
+      <stop
+         offset="100%"
+         stop-color="#C084FC"
+         id="stop2" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#grad"
+       id="linearGradient67"
+       gradientUnits="userSpaceOnUse"
+       x1="0"
+       y1="0"
+       x2="210"
+       y2="120" />
+  </defs>
+  <!--
+    ═══════════════════════════════════════════════
+    Bold capital N  (75 × 100, origin at 3, 12)
+    ═══════════════════════════════════════════════
+    Constructed as a 75×100 filled rectangle with
+    two triangular even-odd cutouts that carve out
+    the upper-right and lower-left concavities:
+
+      • outer rect    M 0 0 L 75 0 L 75 100 L 0 100 Z
+      • upper-right Δ M 36 0 L 57 0 L 57 100 Z
+      • lower-left  Δ M 18 0 L 18 100 L 39 100 Z
+
+    Left stroke  width ≈ 18  (x 0–18)
+    Right stroke width ≈ 18  (x 57–75)
+    Diagonal     width ≈ 18  at each end
+  -->
+  <path
+     fill-rule="evenodd"
+     fill="url(#grad)"
+     transform="translate(3, 12)"
+     d="M 0 0 L 75 0 L 75 100 L 0 100 Z        M 36 0 L 57 0 L 57 100 Z        M 18 0 L 18 100 L 39 100 Z"
+     id="path2" />
+  <!--
+    ═══════════════════════════════════════════════
+    Neural E  (eight neuron nodes + synaptic lines)
+    ═══════════════════════════════════════════════
+    Nodes (cx, cy):
+      A (96, 11)  — top spine / top-bar left
+      B (134,  9) — top-bar middle
+      C (171, 16) — top-bar right
+
+      D (96, 62)  — mid spine / middle-bar left
+      E (147, 61) — middle-bar right  [shorter than top/bottom]
+
+      F (96, 113) — bottom spine / bottom-bar left
+      G (136,112) — bottom-bar middle
+      H (170,111) — bottom-bar right
+
+    Structural edges:  A-D, D-F (spine)
+                       A-B, B-C (top bar)
+                       D-E      (middle bar)
+                       F-G, G-H (bottom bar)
+
+    Neural cross-edges add the synaptic mesh aesthetic.
+  -->
+  <!-- Synaptic connection lines (rendered first, beneath nodes) -->
+  <g
+     stroke="url(#grad)"
+     stroke-width="1.5"
+     fill="none"
+     stroke-linecap="round"
+     opacity="0.85"
+     id="g18">
+    <!-- Spine -->
+    <line
+       x1="96"
+       y1="11"
+       x2="96"
+       y2="62"
+       id="line2"
+       style="fill:#0000ff;fill-opacity:1" />
+    <line
+       x1="96"
+       y1="62"
+       x2="96"
+       y2="113"
+       id="line3" />
+    <!-- Top bar -->
+    <line
+       x1="96"
+       y1="11"
+       x2="134"
+       y2="9"
+       id="line4" />
+    <line
+       x1="134"
+       y1="9"
+       x2="171"
+       y2="16"
+       id="line5" />
+    <!-- Middle bar -->
+    <line
+       x1="96"
+       y1="62"
+       x2="147"
+       y2="61"
+       id="line6" />
+    <!-- Bottom bar -->
+    <line
+       x1="96"
+       y1="113"
+       x2="136"
+       y2="112"
+       id="line7" />
+    <line
+       x1="136"
+       y1="112"
+       x2="170"
+       y2="111"
+       id="line8" />
+    <!-- Cross / neural connections -->
+    <line
+       x1="96"
+       y1="11"
+       x2="171"
+       y2="16"
+       id="line9" />
+    <line
+       x1="96"
+       y1="11"
+       x2="147"
+       y2="61"
+       id="line10" />
+    <line
+       x1="134"
+       y1="9"
+       x2="96"
+       y2="62"
+       id="line11" />
+    <line
+       x1="134"
+       y1="9"
+       x2="147"
+       y2="61"
+       id="line12" />
+    <line
+       x1="171"
+       y1="16"
+       x2="147"
+       y2="61"
+       id="line13" />
+    <line
+       x1="146.61026"
+       y1="63.211094"
+       x2="133.4957"
+       y2="116.27354"
+       id="line13-9"
+       style="stroke:url(#linearGradient67);stroke-width:1.29006" />
+    <line
+       x1="171"
+       y1="16"
+       x2="96"
+       y2="62"
+       id="line14" />
+    <line
+       x1="96"
+       y1="62"
+       x2="136"
+       y2="112"
+       id="line15" />
+    <line
+       x1="147"
+       y1="61"
+       x2="96"
+       y2="113"
+       id="line16" />
+    <line
+       x1="147"
+       y1="61"
+       x2="170"
+       y2="111"
+       id="line17" />
+    <line
+       x1="96"
+       y1="113"
+       x2="170"
+       y2="111"
+       id="line18" />
+  </g>
+  <!-- Neuron nodes (rendered on top of connections) -->
+  <g
+     fill="url(#grad)"
+     id="g25">
+    <circle
+       cx="96"
+       cy="11"
+       r="7"
+       id="circle18" />
+    <!-- A -->
+    <circle
+       cx="134"
+       cy="9"
+       r="7"
+       id="circle19" />
+    <!-- B -->
+    <circle
+       cx="171"
+       cy="16"
+       r="7"
+       id="circle20" />
+    <!-- C -->
+    <circle
+       cx="96"
+       cy="62"
+       r="7"
+       id="circle21" />
+    <!-- D -->
+    <circle
+       cx="147"
+       cy="61"
+       r="7"
+       id="circle22" />
+    <!-- E -->
+    <circle
+       cx="96"
+       cy="113"
+       r="7"
+       id="circle23" />
+    <!-- F -->
+    <circle
+       cx="136"
+       cy="112"
+       r="7"
+       id="circle24" />
+    <!-- G -->
+    <circle
+       cx="170"
+       cy="111"
+       r="7"
+       id="circle25" />
+    <!-- H -->
+  </g>
+</svg>

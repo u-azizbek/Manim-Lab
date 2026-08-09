@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import os
 
-from manimlib.constants import BLACK
+from manimlib.constants import BLACK, DOWN, UP, WHITE, YELLOW
+from manimlib.animation.fading import FadeIn, FadeOut
+from manimlib.mobject.svg.tex_mobject import Tex
+from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.mobject.mobject import Mobject
 from manimlib.scene.interactive_scene import InteractiveScene
 
@@ -79,3 +82,46 @@ class ShortsScene(InteractiveScene):
     def pin_to_top(self, mobject: Mobject, buff: float = 0.5) -> Mobject:
         mobject.set_y(self.frame_height / 2 - buff - mobject.get_height() / 2)
         return mobject
+
+
+class StepListMixin:
+    """A running list of solution lines stacked down the lower part of the
+    frame.  Call `add_step` once per line; positioning is handled."""
+
+    step_color = WHITE
+    result_color = YELLOW
+    steps_top_y = -0.7
+    step_buff = 0.34
+    step_font_size = 36
+    step_max_width = 6.9
+
+    def steps(self) -> VGroup:
+        if not hasattr(self, "_step_lines"):
+            self._step_lines = VGroup()
+        return self._step_lines
+
+    def place_step(self, mobject: Mobject) -> Mobject:
+        lines = self.steps()
+        if len(lines) == 0:
+            mobject.set_y(self.steps_top_y - mobject.get_height() / 2)
+        else:
+            mobject.next_to(lines[-1], DOWN, buff=self.step_buff)
+        mobject.set_x(0)
+        return mobject
+
+    def add_step(self, tex: str, color=None, font_size: int | None = None,
+                 run_time: float = 1.0, wait: float = 0.45, **kwargs) -> Mobject:
+        line = Tex(tex, font_size=font_size or self.step_font_size, **kwargs)
+        line.set_color(color or self.step_color)
+        line.set_max_width(self.step_max_width)
+        self.place_step(line)
+        self.steps().add(line)
+        self.play(FadeIn(line, 0.15 * DOWN), run_time=run_time)
+        if wait:
+            self.wait(wait)
+        return line
+
+    def clear_steps(self, run_time: float = 0.6):
+        if len(self.steps()) > 0:
+            self.play(FadeOut(self.steps(), UP), run_time=run_time)
+        self._step_lines = VGroup()

@@ -9,10 +9,11 @@ from manimlib import *
 
 ASSETS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
 
-# Drop a square PNG of the real badge here and the outro uses it instead of
-# the vector rebuild below
+# The channel's own artwork, used by `channel_mark` for problem cards.
+# The outro badge deliberately uses the rebuilt mark further down instead --
+# that one is tuned to sit inside the disc.
+LOGO_SVG = os.path.join(ASSETS, "logo.svg")
 LOGO_IMAGE = os.path.join(ASSETS, "neuroeduz_logo.png")
-OUTRO_SOUND = os.path.join(ASSETS, "neuroeduz.wav")
 
 PURPLE_DARK = "#3D1670"
 PURPLE_MID = "#6B2FA8"
@@ -38,14 +39,17 @@ LOGO_EDGES = [
 LOGO_RADII = [0.095, 0.100, 0.075, 0.095, 0.090, 0.090, 0.095, 0.088]
 
 
-def n_glyph(width: float = 0.70, height: float = 0.90, stem: float = 0.22) -> Polygon:
+def n_glyph(width: float = 0.70, height: float = 0.90, stem: float = 0.22,
+            tip: float = 0.20) -> Polygon:
     """A heavy geometric capital N, built as an outline.
 
     Drawn rather than typeset so it keeps the badge's blocky proportions
-    whatever fonts happen to be installed.
+    whatever fonts happen to be installed.  `tip` is how far up the right stem
+    the diagonal lands, as a fraction of the height -- smaller means the
+    diagonal runs closer to corner-to-corner.
     """
     w, h, t = width, height, stem
-    y1, y2 = 0.20 * h, 0.80 * h
+    y1, y2 = tip * h, (1 - tip) * h
     points = [
         (0, 0), (0, h), (t, h),            # left stem
         (w - t, y1), (w - t, h),           # diagonal down, then up the right stem
@@ -55,6 +59,64 @@ def n_glyph(width: float = 0.70, height: float = 0.90, stem: float = 0.22) -> Po
     poly = Polygon(*[np.array([x, y, 0.0]) for x, y in points])
     poly.set_stroke(width=0)
     return poly
+
+
+def tint_by_position(mobject, dark=PURPLE_DARK, light=PURPLE_LIGHT, stroke_width=0.0):
+    """Shade a mobject's parts from `dark` at the top-left to `light` at the
+    bottom-right, matching the linearGradient in the channel SVG (manim's SVG
+    reader does not resolve `url(#...)` fills)."""
+    corner = mobject.get_corner(UL)
+    width = max(mobject.get_width(), 1e-6)
+    height = max(mobject.get_height(), 1e-6)
+    for part in mobject.get_family():
+        if not part.has_points():
+            continue
+        centre = part.get_center()
+        t = 0.5 * ((centre[0] - corner[0]) / width + (corner[1] - centre[1]) / height)
+        color = interpolate_color(dark, light, float(np.clip(t, 0, 1)))
+        if stroke_width > 0:
+            part.set_stroke(color, stroke_width)
+        else:
+            part.set_fill(color, 1).set_stroke(width=0)
+    return mobject
+
+
+def channel_mark(height: float = 1.0):
+    """The N + neural-E mark from the channel SVG, re-tinted and split into
+    `letter`, `edges` and `nodes` so it can be revealed piece by piece."""
+    if not os.path.exists(LOGO_SVG):
+        return None
+
+    svg = SVGMobject(LOGO_SVG)
+    # Straight connector lines come in with a handful of points; the letter and
+    # the nodes are closed shapes, the letter being much the largest
+    thin = VGroup(*[part for part in svg if len(part.get_points()) <= 8])
+    solid = [part for part in svg if len(part.get_points()) > 8]
+    solid.sort(key=lambda part: -part.get_width())
+    svg_letter, nodes = solid[0], VGroup(*solid[1:])
+
+    # manim's SVG reader ignores the file's fill-rule="evenodd", so the N comes
+    # in as a solid block.  Redraw it as an outline over the same box; the
+    # proportions (stem 18/75, diagonal corner to corner) are from the file.
+    letter = n_glyph(width=0.75, height=1.0, stem=0.18, tip=0.10)
+    letter.replace(svg_letter, stretch=True)
+
+    tint_by_position(letter)
+    tint_by_position(nodes)
+    tint_by_position(thin, stroke_width=1.0)
+
+    mark = VGroup(thin, nodes, letter)
+    mark.letter, mark.edges, mark.nodes = letter, thin, nodes
+    mark.set_height(height)
+    set_mark_stroke(mark)
+    return mark
+
+
+def set_mark_stroke(mark):
+    """Stroke width is absolute in manim, so the synapse lines have to be
+    re-set whenever the mark is resized or they clot into a blob."""
+    mark.edges.set_stroke(width=max(0.6, 1.5 * mark.get_height()))
+    return mark
 
 
 class NeuroEduLogo(Group):
@@ -81,6 +143,9 @@ class NeuroEduLogo(Group):
         face = Circle(radius=0.90).set_fill(WHITE, 1).set_stroke(width=0)
         self.disc = VGroup(rim, inner_rim, face)
 
+        # The badge deliberately keeps this rebuilt mark rather than the SVG
+        # one: it is tuned for the disc.  `channel_mark` (the real SVG) is for
+        # problem cards.
         letter = n_glyph()
         letter.set_fill(PURPLE_DARK, 1)
         letter.move_to(np.array([-0.41, 0.0, 0.0]))
@@ -113,15 +178,14 @@ class NeuroEduLogo(Group):
 
 class BrandOutroMixin:
     """Adds an `outro` section: badge pops in, the network lights up, the
-    handle types out, and a one-word sting plays on the pop.
+    handle types out.
 
-    Add "outro" to the scene's `sections` list.  Set `outro_sound = ""` to
-    render it silent.
+    Add "outro" to the scene's `sections` list.  The outro is silent by
+    design -- these shorts carry no audio track.
     """
 
     outro_handle = "@neuroeduz"
     outro_tagline = "math, every day"
-    outro_sound = OUTRO_SOUND
     outro_logo_height = 3.4
     outro_hold = 1.2
 
@@ -143,9 +207,6 @@ class BrandOutroMixin:
         underline.set_width(handle.get_width() * 0.62)
         underline.set_stroke(PURPLE_LIGHT, 5)
         underline.next_to(handle, DOWN, buff=0.24)
-
-        if self.outro_sound_enabled():
-            self.add_sound(self.outro_sound, time_offset=0.18, gain=-2)
 
         # The badge lands with a little overshoot
         self.play(FadeIn(logo.disc, scale=0.35), run_time=0.45, rate_func=rush_from)
@@ -176,13 +237,6 @@ class BrandOutroMixin:
         )
         self.play(FadeIn(tagline, 0.15 * UP), run_time=0.4)
         self.wait(self.outro_hold)
-
-    def outro_sound_enabled(self) -> bool:
-        """False when NO_SOUND is set (render.sh --silent), when the scene
-        sets `outro_sound = ""`, or when the asset is missing."""
-        if os.environ.get("NO_SOUND", "").strip().lower() in ("1", "true", "yes", "on"):
-            return False
-        return bool(self.outro_sound) and os.path.exists(self.outro_sound)
 
     def clear_for_outro(self, run_time: float = 0.5):
         """Sweep whatever is on screen before the badge lands."""

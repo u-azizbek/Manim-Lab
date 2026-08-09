@@ -47,7 +47,6 @@ ${bold}Options:${reset}
                         4k      2160x3840  portrait, high res
                         hd      1920x1080  landscape
                         or an explicit WIDTHxHEIGHT
-  -S, --silent          Render without the outro sound (sets NO_SOUND=1)
   -p, --preview         Open a live window instead of writing a file
       --presenter       Preview, pausing at every wait() until you hit space
   -e, --embed LINE      Drop into the interactive shell at this line number
@@ -67,7 +66,6 @@ EOF
 }
 
 sections=""
-silent=false
 quality="shorts"
 preview=false
 presenter=false
@@ -89,7 +87,6 @@ while [[ $# -gt 0 ]]; do
         -s|--sections) need_value "$1" "${2:-}"; sections="$2"; shift 2 ;;
         -q|--quality)  need_value "$1" "${2:-}"; quality="$2"; shift 2 ;;
         -e|--embed)    need_value "$1" "${2:-}"; embed_line="$2"; shift 2 ;;
-        -S|--silent)   silent=true; shift ;;
         -p|--preview)  preview=true; shift ;;
         --presenter)   preview=true; presenter=true; shift ;;
         -o|--open)     open_after=true; shift ;;
@@ -191,10 +188,9 @@ fi
 echo "${dim}scene      $scene${reset}"
 echo "${dim}resolution $resolution${reset}"
 [[ -n "$sections" ]] && echo "${dim}sections   $sections${reset}"
-$silent && echo "${dim}sound      off${reset}" || true
 
 if $dry_run; then
-    echo "SECTIONS='$sections' NO_SOUND='$($silent && echo 1)' PYTHONPATH='$REPO_ROOT' ${cmd[*]}"
+    echo "SECTIONS='$sections' PYTHONPATH='$REPO_ROOT' ${cmd[*]}"
     exit 0
 fi
 
@@ -202,8 +198,7 @@ marker="$(mktemp)"
 trap 'rm -f "$marker"' EXIT
 
 cd "$REPO_ROOT"
-NO_SOUND="$($silent && echo 1 || true)" SECTIONS="$sections" \
-    PYTHONPATH="$REPO_ROOT" "${cmd[@]}"
+SECTIONS="$sections" PYTHONPATH="$REPO_ROOT" "${cmd[@]}"
 
 # Nothing was written to disk in these modes
 if $preview || [[ -n "$embed_line" ]]; then

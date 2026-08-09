@@ -4,7 +4,7 @@ import numpy as np
 
 from manimlib import *
 
-from custom.shorts import ShortsScene
+from custom.shorts import ShortsScene, StepListMixin
 
 
 def to_point(xy) -> np.ndarray:
@@ -262,7 +262,7 @@ class GeoFigure:
         return ang_a, diff
 
 
-class GeometryShortScene(ShortsScene):
+class GeometryShortScene(StepListMixin, ShortsScene):
     """A 9:16 short built around one figure with a running list of steps.
 
     Subclasses build the figure and call `add_step` / `replace_steps`; the base
@@ -272,18 +272,8 @@ class GeometryShortScene(ShortsScene):
 
     title_text = ""
     title_color = GREY_A
-    step_color = WHITE
-    result_color = YELLOW
     figure_width = 6.6
     figure_center_y = 2.9
-    steps_top_y = -0.7
-    step_buff = 0.34
-    step_font_size = 36
-    max_steps = 6
-
-    def setup(self):
-        super().setup()
-        self.step_lines = VGroup()
 
     def make_title(self):
         title = Text(self.title_text, font_size=40, weight=BOLD)
@@ -294,28 +284,3 @@ class GeometryShortScene(ShortsScene):
     def get_title(self):
         return self.lazy("title", self.make_title)
 
-    def next_step_position(self, mobject) -> Mobject:
-        if len(self.step_lines) == 0:
-            mobject.set_y(self.steps_top_y - mobject.get_height() / 2)
-        else:
-            mobject.next_to(self.step_lines[-1], DOWN, buff=self.step_buff)
-        mobject.set_x(0)
-        return mobject
-
-    def add_step(self, tex: str, color: ManimColor | None = None,
-                 font_size: int | None = None, run_time: float = 1.0,
-                 wait: float = 0.45, **kwargs) -> Mobject:
-        line = Tex(tex, font_size=font_size or self.step_font_size, **kwargs)
-        line.set_color(color or self.step_color)
-        line.set_max_width(6.9)
-        self.next_step_position(line)
-        self.step_lines.add(line)
-        self.play(FadeIn(line, 0.15 * DOWN), run_time=run_time)
-        if wait:
-            self.wait(wait)
-        return line
-
-    def clear_steps(self, run_time: float = 0.6):
-        if len(self.step_lines) > 0:
-            self.play(FadeOut(self.step_lines, UP), run_time=run_time)
-            self.step_lines = VGroup()
