@@ -22,11 +22,13 @@ dist/
 build/
 *.egg
 
-# Manim output
+# Manim output -- rendered videos, latex cache and downloads all live here
+# (see the `directories` block in custom_config.yml)
+output/
+
+# ...and a safety net, in case a render ever lands somewhere else
 videos/
 media/
-images/raster/
-images/vector/
 *.mp4
 *.mov
 *.avi

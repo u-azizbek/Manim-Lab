@@ -29,6 +29,8 @@ This is the 3Blue1Brown video creation repository containing the Python code use
 - `once_useful_constructs/` - Legacy utility classes and functions
 - `outside_videos/` - Content for external collaborations and one-offs
 - `sublime_custom_commands/` - Sublime Text editor integration
+- `assets/` - Input assets (logo, images, sounds); tracked in git
+- `output/` - Everything manim writes; git-ignored, never commit it
 
 ### Core Files
 - `manim_imports_ext.py` - Universal import file that imports all Manim components plus custom extensions
@@ -64,7 +66,28 @@ Each video project typically contains:
 ### Configuration
 - Camera resolution: 4K (3840x2160) at 30fps
 - Custom fonts and LaTeX configuration in `custom_config.yml`
-- Dropbox integration for asset management and video output
+
+### Render Output
+All manim output stays inside the repo under `output/`, which `.gitignore`
+excludes — rendered videos are never pushed to GitHub.
+
+```
+output/
+  videos/       rendered scenes, mirroring the source tree
+  latex_cache/  compiled LaTeX
+  downloads/    anything manim fetches
+```
+
+`mirror_module_path` is on, so the video path follows the source path with the
+leading underscore dropped:
+
+| source | video |
+| --- | --- |
+| `_2026/Integrals/inverse_function_integral.py` | `output/videos/2026/Integrals/inverse_function_integral/<Scene>.mp4` |
+
+The `directories` block in `custom_config.yml` holds absolute paths, so it must
+be updated if the repo is ever moved; `render.sh` warns when they no longer
+point at the repo. Input assets resolve to `assets/`, not `output/`.
 
 ## Code Patterns
 

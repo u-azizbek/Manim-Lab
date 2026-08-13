@@ -1,14 +1,24 @@
 directories:
+  # Everything manim writes goes under <repo>/output/, which is git-ignored.
+  # The video tree mirrors the source tree (minus the leading underscore), so
+  #   _2026/Integrals/inverse_function_integral.py
+  # renders to
+  #   output/videos/2026/Integrals/inverse_function_integral/<Scene>.mp4
   mirror_module_path: True
-  removed_mirror_prefix: "/Users/future/Desktop/Manim-Lab/"
-  base: "/Users/future/Movies/Manim/"
+  removed_mirror_prefix: "/Users/future/Documents/Manim-Lab/"
+  base: "/Users/future/Documents/Manim-Lab/output/"
   subdirs:
-    raster_images: "images/raster"
-    vector_images: "images/vector"
-    three_d_models: "images/models"
-    pi_creature_images: "images/pi_creature/svg"
-    downloads: "manim_downloads"
-    # Use the default value for the rest
+    output: "videos"
+    downloads: "downloads"
+    # Assets are inputs, so they live with the source rather than in output/.
+    # Absolute paths here deliberately override `base` above.
+    raster_images: "/Users/future/Documents/Manim-Lab/assets/images/raster"
+    vector_images: "/Users/future/Documents/Manim-Lab/assets/images/vector"
+    three_d_models: "/Users/future/Documents/Manim-Lab/assets/models"
+    pi_creature_images: "/Users/future/Documents/Manim-Lab/assets/pi_creature/svg"
+    sounds: "/Users/future/Documents/Manim-Lab/assets/sounds"
+    data: "/Users/future/Documents/Manim-Lab/assets/data"
+    # Use the default value for the rest (latex_cache, ...)
 universal_import_line: "from manim_imports_ext import *"
 window:
   position_string: UR

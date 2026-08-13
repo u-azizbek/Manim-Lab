@@ -208,7 +208,15 @@ fi
 # manimgl only reports the output path through wrapped log output, so rather
 # than scrape it, look for what appeared while we were rendering
 base="$(sed -n 's/^[[:space:]]*base:[[:space:]]*"\(.*\)"/\1/p' "$CONFIG" | head -1)"
-base="${base:-$HOME/Movies/Manim/}"
+base="${base:-$REPO_ROOT/output/}"
+
+# The config stores an absolute path, so it goes stale if the repo is moved.
+# Say so loudly rather than quietly rendering into the old location.
+if [[ "${base%/}" != "$REPO_ROOT/output" ]]; then
+    echo "${red}warning:${reset} custom_config.yml writes to ${base%/}," >&2
+    echo "         not $REPO_ROOT/output -- update its ${bold}directories${reset} block." >&2
+fi
+
 video="$(find "${base%/}/videos" -name "$scene.mp4" -newer "$marker" 2>/dev/null | head -1)"
 
 if [[ -z "$video" ]]; then
