@@ -17,3 +17,4 @@ from custom.split_screen import *
 from custom.geometry_kit import *
 from custom.outro import *
 from custom.cards import *
+from custom.matrix_kit import *

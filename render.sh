@@ -123,9 +123,33 @@ import ast, sys
 path, mode = sys.argv[1], sys.argv[2]
 tree = ast.parse(open(path).read())
 
+# Video files also define plain helper mobjects; only report the scenes.  A
+# class counts as one if it inherits something *Scene, defines construct or
+# sections, or subclasses another scene defined earlier in the same file.
+scenes = set()
+
+
+def is_scene(node):
+    for base in node.bases:
+        name = getattr(base, "id", None) or getattr(base, "attr", None) or ""
+        if name.endswith("Scene") or name in scenes:
+            return True
+    for statement in node.body:
+        if isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if statement.name == "construct":
+                return True
+        for target in getattr(statement, "targets", []):
+            if getattr(target, "id", None) == "sections":
+                return True
+    return False
+
+
 for node in tree.body:
     if not isinstance(node, ast.ClassDef):
         continue
+    if not is_scene(node):
+        continue
+    scenes.add(node.name)
     sections = []
     for statement in node.body:
         targets = getattr(statement, "targets", [])

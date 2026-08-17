@@ -11,6 +11,14 @@ CARD_EDGE = "#8FB4E3"
 CARD_INK = "#101828"      # near-black, for text on the light card
 
 
+class CardTex(Tex):
+    """`Tex` centers on the `align*` alignment point, which right-aligns the
+    rows of a multi-line statement.  Cards want each row centered instead.
+    Single-row statements render identically either way."""
+
+    tex_environment = "gather*"
+
+
 class ProblemCard(VGroup):
     """A rounded, light-backed card holding the problem statement, with the
     channel mark tucked into a corner.
@@ -30,12 +38,12 @@ class ProblemCard(VGroup):
         edge: ManimColor = CARD_EDGE,
         ink: ManimColor = CARD_INK,
         corner_radius: float = 0.26,
-        logo_height: float = 0.62,
+        logo_height: float = 1.00,
         label: str = "",
     ):
         super().__init__()
 
-        self.body = Tex(tex, font_size=font_size)
+        self.body = CardTex(tex, font_size=font_size)
         self.body.set_color(ink)
 
         self.logo = channel_mark(height=logo_height)
