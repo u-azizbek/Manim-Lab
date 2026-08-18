@@ -4,6 +4,7 @@ import os
 
 from manimlib.constants import BLACK, DOWN, UP, WHITE, YELLOW
 from manimlib.animation.fading import FadeIn, FadeOut
+from manimlib.animation.transform import TransformFromCopy
 from manimlib.mobject.svg.tex_mobject import Tex
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.mobject.mobject import Mobject
@@ -117,6 +118,21 @@ class StepListMixin:
         self.place_step(line)
         self.steps().add(line)
         self.play(FadeIn(line, 0.15 * DOWN), run_time=run_time)
+        if wait:
+            self.wait(wait)
+        return line
+
+    def transform_step(self, source: Mobject, tex: str, color=None,
+                       font_size: int | None = None, run_time: float = 1.4,
+                       wait: float = 0.6, **kwargs) -> Mobject:
+        """Like `add_step`, but grows the new line out of an earlier one, so
+        consecutive lines of algebra read as one continuous move."""
+        line = Tex(tex, font_size=font_size or self.step_font_size, **kwargs)
+        line.set_color(color or self.step_color)
+        line.set_max_width(self.step_max_width)
+        self.place_step(line)
+        self.steps().add(line)
+        self.play(TransformFromCopy(source, line), run_time=run_time)
         if wait:
             self.wait(wait)
         return line
