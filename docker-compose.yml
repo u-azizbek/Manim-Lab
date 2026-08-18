@@ -1,0 +1,33 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      # Left empty rather than required, so `docker compose down`/`logs` work
+      # without it; the UI shows a warning and generation fails with a clear
+      # message until it is set.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-5}
+      RENDER_RESOLUTION: ${RENDER_RESOLUTION:-1080x1920}
+      RENDER_TIMEOUT: ${RENDER_TIMEOUT:-900}
+      REPAIR_ATTEMPTS: ${REPAIR_ATTEMPTS:-1}
+    volumes:
+      # The scene files generated here import manim_imports_ext from the repo.
+      # Read-only: model-written code runs in this container and must not be
+      # able to touch the checkout.
+      - ./:/repo:ro
+      # Jobs, renders and the LaTeX cache
+      - studio-workspace:/workspace
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "${STUDIO_PORT:-8080}:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  studio-workspace:

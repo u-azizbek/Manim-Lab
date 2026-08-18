@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .field {
+    @apply w-full rounded-lg border border-edge bg-ink px-3 py-2 text-sm text-slate-100
+           placeholder:text-slate-500 focus:border-accent focus:outline-none;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-400;
+  }
+  .panel {
+    @apply rounded-2xl border border-edge bg-panel p-5;
+  }
+}

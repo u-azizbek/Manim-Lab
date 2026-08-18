@@ -51,3 +51,7 @@ media/
 .venv
 env/
 venv/
+
+# Shorts Studio (frontend build artefacts)
+node_modules/
+frontend/dist/

@@ -1,0 +1,37 @@
+# Container twin of the repo's custom_config.yml.  Same camera and fonts, but
+# the paths point at the container's mounts instead of the developer's Mac.
+directories:
+  # Each job renders into its own directory passed via --video_dir, so no
+  # mirroring is wanted here.
+  mirror_module_path: False
+  base: "/workspace/"
+  subdirs:
+    output: "videos"
+    downloads: "downloads"
+    # Input assets come from the read-only repo mount
+    raster_images: "/repo/assets/images/raster"
+    vector_images: "/repo/assets/images/vector"
+    three_d_models: "/repo/assets/models"
+    pi_creature_images: "/repo/assets/pi_creature/svg"
+    sounds: "/repo/assets/sounds"
+    data: "/repo/assets/data"
+universal_import_line: "from manim_imports_ext import *"
+window:
+  position_string: UR
+  monitor_index: 0
+  full_screen: False
+camera:
+  resolution: (1080, 1920)
+  background_color: "#000000"
+  fps: 30
+  background_opacity: 1.0
+file_writer:
+  saturation: 1.5
+text:
+  font: "CMU Serif"
+  alignment: "CENTER"
+tex:
+  template: "default"
+embed:
+  autoreload: False
+ignore_manimlib_modules_on_reload: True

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shorts Studio &middot; Manim-Lab</title>
+  </head>
+  <body class="min-h-full bg-ink text-slate-100 antialiased">
+    <div class="mx-auto max-w-6xl px-5 py-8">
+      <header class="mb-8 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">Shorts Studio</h1>
+          <p class="mt-1 text-sm text-slate-400">
+            Upload a problem from the workbook. It gets solved, animated and rendered.
+          </p>
+        </div>
+        <div id="health" class="text-xs text-slate-500">checking backend&hellip;</div>
+      </header>
+
+      <div class="grid gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
+        <!-- Input -->
+        <form id="form" class="panel space-y-5">
+          <div>
+            <span class="label">Problem screenshot</span>
+            <label id="drop"
+              class="flex cursor-pointer flex-col items-center justify-center gap-2
+                     rounded-xl border-2 border-dashed border-edge bg-ink/60 px-4 py-8
+                     text-center transition hover:border-accent">
+              <input id="file" type="file" accept="image/png,image/jpeg,image/webp" class="hidden" />
+              <img id="preview" alt="" class="hidden max-h-52 w-full rounded-lg object-contain" />
+              <div id="dropText" class="text-sm text-slate-400">
+                <span class="font-medium text-accent">Choose an image</span> or drop it here
+                <div class="mt-1 text-xs text-slate-500">PNG, JPEG or WebP, up to 12&nbsp;MB</div>
+              </div>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="label" for="test">Test</label>
+              <input id="test" name="test" class="field" value="F1" placeholder="F1" required />
+              <p class="mt-1 text-xs text-slate-500">F1, A2, E3&hellip;</p>
+            </div>
+            <div>
+              <label class="label" for="question">Question</label>
+              <input id="question" name="question" class="field" type="number"
+                     min="1" max="999" value="21" required />
+            </div>
+          </div>
+
+          <div>
+            <label class="label" for="resolution">Render size</label>
+            <select id="resolution" class="field">
+              <option value="1080x1920">1080 &times; 1920 &mdash; final</option>
+              <option value="540x960">540 &times; 960 &mdash; draft, about 4&times; faster</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="label" for="notes">Notes for the solver <span class="normal-case text-slate-500">(optional)</span></label>
+            <textarea id="notes" rows="3" class="field"
+              placeholder="e.g. use the substitution route, not L'Hopital"></textarea>
+          </div>
+
+          <button id="submit" type="submit"
+            class="w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-ink
+                   transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40">
+            Generate video
+          </button>
+          <p id="formError" class="hidden rounded-lg border border-bad/40 bg-bad/10 px-3 py-2 text-xs text-bad"></p>
+        </form>
+
+        <!-- Output -->
+        <section class="space-y-6">
+          <div id="statusPanel" class="panel hidden">
+            <div class="flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <span id="spinner"
+                  class="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-edge border-t-accent"></span>
+                <div>
+                  <div id="statusLabel" class="text-sm font-semibold">Working&hellip;</div>
+                  <div id="statusStage" class="text-xs text-slate-400"></div>
+                </div>
+              </div>
+              <span id="statusBadge"
+                class="rounded-full border border-edge px-2.5 py-1 text-xs font-medium text-slate-300"></span>
+            </div>
+            <div id="repairs"
+              class="mt-4 hidden rounded-lg border border-warn/40 bg-warn/10 p-3 text-xs text-warn/90"></div>
+            <p id="statusError"
+              class="mt-4 hidden whitespace-pre-wrap rounded-lg border border-bad/40 bg-bad/10 p-3
+                     font-mono text-xs leading-relaxed text-bad"></p>
+          </div>
+
+          <div id="videoPanel" class="panel hidden">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <h2 class="text-sm font-semibold">Preview</h2>
+              <a id="download" class="text-xs font-medium text-accent hover:underline" download>Download mp4</a>
+            </div>
+            <video id="video" controls playsinline
+              class="mx-auto max-h-[70vh] rounded-xl border border-edge bg-black"></video>
+          </div>
+
+          <details id="codePanel" class="panel hidden">
+            <summary class="cursor-pointer text-sm font-semibold">Generated scene file</summary>
+            <pre class="mt-4 max-h-96 overflow-auto rounded-lg bg-ink p-4 text-xs leading-relaxed
+                        text-slate-300"><code id="code"></code></pre>
+          </details>
+
+          <div class="panel">
+            <h2 class="mb-3 text-sm font-semibold">Recent</h2>
+            <ul id="history" class="space-y-2 text-sm text-slate-400"></ul>
+          </div>
+        </section>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
