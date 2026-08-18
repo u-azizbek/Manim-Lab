@@ -6,7 +6,7 @@ services:
       # without it; the UI shows a warning and generation fails with a clear
       # message until it is set.
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-5}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5}
       RENDER_RESOLUTION: ${RENDER_RESOLUTION:-1080x1920}
       RENDER_TIMEOUT: ${RENDER_TIMEOUT:-900}
       REPAIR_ATTEMPTS: ${REPAIR_ATTEMPTS:-1}

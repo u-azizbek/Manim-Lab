@@ -13,10 +13,14 @@ class Settings:
     # Writable scratch space: one directory per job.
     workspace_dir = Path(os.environ.get("WORKSPACE_DIR", "/workspace"))
     manim_config = Path(os.environ.get("MANIM_CONFIG", "/srv/manim_config.docker.yml"))
+    # Where the user drops background-music files (read-only repo mount)
+    music_dir = Path(os.environ.get("MUSIC_DIR", "/repo/BG Music"))
 
     anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    # Switch to claude-sonnet-5 for faster, cheaper generation.
-    model = os.environ.get("ANTHROPIC_MODEL", "claude-opus-5")
+    max_problem_chars = int(os.environ.get("MAX_PROBLEM_CHARS", "4000"))
+    # Sonnet handles this well and costs a fraction of Opus. Set
+    # ANTHROPIC_MODEL=claude-haiku-4-5-20251001 to go cheaper still.
+    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5")
     max_tokens = int(os.environ.get("ANTHROPIC_MAX_TOKENS", "8000"))
 
     # 1080x1920 is the final Shorts size; 540x960 renders roughly 4x faster.

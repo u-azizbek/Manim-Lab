@@ -55,3 +55,7 @@ venv/
 # Shorts Studio (frontend build artefacts)
 node_modules/
 frontend/dist/
+
+# Background music uploads (keep the folder + README, not the audio files)
+BG Music/*
+!BG Music/README.md

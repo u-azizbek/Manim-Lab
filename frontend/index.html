@@ -20,8 +20,14 @@
       <div class="grid gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
         <!-- Input -->
         <form id="form" class="panel space-y-5">
-          <div>
-            <span class="label">Problem screenshot</span>
+          <div class="flex gap-1 rounded-lg border border-edge bg-ink p-1">
+            <button type="button" data-mode="image"
+              class="mode-tab flex-1 rounded-md px-3 py-1.5 text-sm font-medium">Screenshot</button>
+            <button type="button" data-mode="latex"
+              class="mode-tab flex-1 rounded-md px-3 py-1.5 text-sm font-medium">LaTeX</button>
+          </div>
+
+          <div data-panel="image">
             <label id="drop"
               class="flex cursor-pointer flex-col items-center justify-center gap-2
                      rounded-xl border-2 border-dashed border-edge bg-ink/60 px-4 py-8
@@ -30,9 +36,27 @@
               <img id="preview" alt="" class="hidden max-h-52 w-full rounded-lg object-contain" />
               <div id="dropText" class="text-sm text-slate-400">
                 <span class="font-medium text-accent">Choose an image</span> or drop it here
-                <div class="mt-1 text-xs text-slate-500">PNG, JPEG or WebP, up to 12&nbsp;MB</div>
+                <div class="mt-1 text-xs text-slate-500">PNG, JPEG or WebP, up to 12&nbsp;MB &middot; paste works too</div>
               </div>
             </label>
+          </div>
+
+          <div data-panel="latex" class="hidden">
+            <label class="label" for="latex">Problem, written in LaTeX</label>
+            <textarea id="latex" rows="5" class="field font-mono text-[13px] leading-relaxed"
+              placeholder="\lim_{x \to 0} \frac{e^{3x} - 1 - 3x}{x^2} = \, ?"></textarea>
+            <p class="mt-1.5 text-xs text-slate-500">
+              Paste it straight from the book &mdash; prose, inline
+              <code class="text-slate-400">$&hellip;$</code>, display
+              <code class="text-slate-400">$$&hellip;$$</code> and
+              <code class="text-slate-400">\begin{equation*}</code> environments
+              all render.
+            </p>
+            <div class="mt-3 rounded-lg border border-edge bg-ink px-3 py-3">
+              <div class="label mb-2">Preview</div>
+              <div id="latexPreview"
+                class="space-y-1 overflow-x-auto py-1 text-left leading-relaxed text-slate-100"></div>
+            </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -99,6 +123,71 @@
             </div>
             <video id="video" controls playsinline
               class="mx-auto max-h-[70vh] rounded-xl border border-edge bg-black"></video>
+
+            <div id="musicPanel" class="mt-5 hidden border-t border-edge pt-5">
+              <div class="mb-3 flex items-center justify-between">
+                <h3 class="text-sm font-semibold">Background music</h3>
+                <span id="musicBadge"
+                  class="hidden rounded-full border border-good/50 px-2.5 py-1 text-xs text-good"></span>
+              </div>
+
+              <div id="musicEmpty"
+                class="hidden rounded-lg border border-edge bg-ink/60 px-3 py-4 text-xs text-slate-400">
+                No music yet. Drop audio files into the
+                <code class="text-slate-300">BG&nbsp;Music/</code> folder in your project
+                and they appear here &mdash; no restart needed.
+              </div>
+
+              <div id="musicControls" class="hidden space-y-4">
+                <div>
+                  <label class="label" for="track">Track</label>
+                  <select id="track" class="field"></select>
+                </div>
+                <audio id="trackAudio" controls preload="none" class="w-full"></audio>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="label" for="start">Start in track</label>
+                    <div class="flex gap-2">
+                      <input id="start" type="number" min="0" step="0.5" value="0" class="field" />
+                      <button type="button" id="setStart"
+                        class="shrink-0 rounded-lg border border-edge px-2 text-xs text-slate-300 hover:border-accent"
+                        title="Use the audio player's current time">From&nbsp;player</button>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="label" for="volume">Volume &middot; <span id="volLabel" class="text-slate-400">60%</span></label>
+                    <input id="volume" type="range" min="0" max="150" value="60" class="mt-2 w-full accent-accent" />
+                  </div>
+                  <div>
+                    <label class="label" for="fadeIn">Fade in (s)</label>
+                    <input id="fadeIn" type="number" min="0" step="0.5" value="0.5" class="field" />
+                  </div>
+                  <div>
+                    <label class="label" for="fadeOut">Fade out (s)</label>
+                    <input id="fadeOut" type="number" min="0" step="0.5" value="1.5" class="field" />
+                  </div>
+                </div>
+
+                <label class="flex items-center gap-2 text-sm text-slate-300">
+                  <input id="loop" type="checkbox" class="h-4 w-4 accent-accent" />
+                  Loop if the track is shorter than the video
+                </label>
+
+                <p id="musicInfo" class="text-xs text-slate-500"></p>
+
+                <div class="flex gap-2">
+                  <button type="button" id="applyMusic"
+                    class="flex-1 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-ink
+                           transition hover:brightness-110 disabled:opacity-40">Apply music</button>
+                  <button type="button" id="removeMusic"
+                    class="hidden rounded-lg border border-edge px-4 py-2 text-sm text-slate-300
+                           transition hover:border-bad hover:text-bad">Remove</button>
+                </div>
+                <p id="musicError"
+                  class="hidden rounded-lg border border-bad/40 bg-bad/10 px-3 py-2 text-xs text-bad"></p>
+              </div>
+            </div>
           </div>
 
           <details id="codePanel" class="panel hidden">

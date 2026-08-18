@@ -91,13 +91,25 @@ def build_system_prompt() -> str:
     return "".join(blocks)
 
 
-def build_user_prompt(test: str, question: int, notes: str = "") -> str:
+def build_user_prompt(test: str, question: int, notes: str = "",
+                      problem: str = "") -> str:
     lines = [
         f"This problem is {test}:{question} in the workbook.",
         f"Set `test = \"{test}\"` and `question = {question}`, "
         f"so the card is tagged {test}:{question}.",
-        "Solve it, then write the scene file.",
     ]
+    if problem.strip():
+        lines.append(
+            "\nThe author typed the problem out rather than sending a photo:"
+            f"\n\n{problem.strip()}\n\n"
+            "Keep the mathematics exactly as written, but format it into a single "
+            "compact `problem_tex` for the card, which is one math-mode `Tex`: wrap "
+            "any prose words in `\\text{...}`, replace display environments like "
+            "`\\begin{equation*}...\\end{equation*}` with just their inner "
+            "expression, use `\\\\` for line breaks, and drop any "
+            "multiple-choice options. Do not reword the problem."
+        )
+    lines.append("Solve it, then write the scene file.")
     if notes.strip():
         lines.append(f"\nExtra direction from the author:\n{notes.strip()}")
     return "\n".join(lines)

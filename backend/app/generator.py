@@ -51,31 +51,46 @@ def find_scene_class(code: str) -> str:
     return names[0]
 
 
+def _user_content(image_bytes: bytes | None, media_type: str, test: str,
+                  question: int, notes: str, problem: str) -> list[dict]:
+    """The problem can arrive as a photo, as typed LaTeX, or as both."""
+    content: list[dict] = []
+    if image_bytes:
+        content.append({
+            "type": "image",
+            "source": {
+                "type": "base64",
+                "media_type": media_type,
+                "data": base64.b64encode(image_bytes).decode(),
+            },
+        })
+    content.append({
+        "type": "text",
+        "text": build_user_prompt(test, question, notes, problem),
+    })
+    return content
+
+
 def generate_scene(
-    image_bytes: bytes,
+    image_bytes: bytes | None,
     media_type: str,
     test: str,
     question: int,
     notes: str = "",
+    problem: str = "",
 ) -> str:
-    """Turn a photo of a problem into a scene file."""
+    """Turn a problem -- photographed or typed -- into a scene file."""
+    if not image_bytes and not problem.strip():
+        raise GenerationError("no problem was supplied")
     message = _client().messages.create(
         model=settings.model,
         max_tokens=settings.max_tokens,
         system=build_system_prompt(),
         messages=[{
             "role": "user",
-            "content": [
-                {
-                    "type": "image",
-                    "source": {
-                        "type": "base64",
-                        "media_type": media_type,
-                        "data": base64.b64encode(image_bytes).decode(),
-                    },
-                },
-                {"type": "text", "text": build_user_prompt(test, question, notes)},
-            ],
+            "content": _user_content(
+                image_bytes, media_type, test, question, notes, problem,
+            ),
         }],
     )
     text = "".join(block.text for block in message.content if block.type == "text")
@@ -84,14 +99,16 @@ def generate_scene(
     return strip_fences(text)
 
 
-def repair_scene(code: str, error: str, test: str, question: int) -> str:
+def repair_scene(code: str, error: str, test: str, question: int,
+                 problem: str = "") -> str:
     """Second pass: hand back the traceback and ask for a corrected file."""
     message = _client().messages.create(
         model=settings.model,
         max_tokens=settings.max_tokens,
         system=build_system_prompt(),
         messages=[
-            {"role": "user", "content": build_user_prompt(test, question)},
+            {"role": "user",
+             "content": build_user_prompt(test, question, problem=problem)},
             {"role": "assistant", "content": code},
             {
                 "role": "user",

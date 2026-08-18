@@ -32,7 +32,7 @@ All optional, in `.env`:
 | Variable | Default | Notes |
 | --- | --- | --- |
 | `ANTHROPIC_API_KEY` | *required* | |
-| `ANTHROPIC_MODEL` | `claude-opus-5` | `claude-sonnet-5` is faster and cheaper |
+| `ANTHROPIC_MODEL` | `claude-sonnet-5` | `claude-haiku-4-5-20251001` is cheaper still |
 | `RENDER_RESOLUTION` | `1080x1920` | the UI can override per job |
 | `RENDER_TIMEOUT` | `900` | seconds |
 | `REPAIR_ATTEMPTS` | `1` | retries after a failed render, feeding back the traceback |
@@ -70,6 +70,33 @@ All optional, in `.env`:
   container, so it cannot modify the checkout. Renders and the LaTeX cache go
   to a named volume. Treat the app as a local tool: it runs generated code by
   design, so do not expose the port to an untrusted network.
+
+## Background music
+
+Drop audio files (`.mp3`, `.m4a`, `.wav`, `.ogg`, `.flac`, `.opus`) into the
+`BG Music/` folder at the repo root. They appear in the music picker under a
+finished video automatically -- no restart.
+
+The manim render itself stays **silent**; music is muxed on top afterwards as a
+fast ffmpeg step (`-c:v copy`, ~1-2s), so you can tweak and re-apply freely.
+Controls:
+
+- **Track** -- any file in `BG Music/`, with its length shown.
+- **Start in track** -- seek into a long track so it begins at its best part.
+  The audio player above it has a *From player* button that copies its current
+  playhead into this field.
+- **Volume**, **Fade in**, **Fade out** -- the fade-out matters because the
+  track is cut to the video's length.
+- **Loop** -- repeat a track shorter than the video; otherwise it plays once and
+  the rest is silence. Auto-suggested when the track is too short.
+
+The result is trimmed to exactly the video's length and replaces the preview;
+the download link then points at the version with music. *Remove* reverts to the
+silent render. Nothing here re-renders the animation.
+
+Endpoints: `GET /api/music`, `GET /api/music/{id}/audio`,
+`POST /api/jobs/{id}/music`, `DELETE /api/jobs/{id}/music`,
+`GET /api/jobs/{id}/music-video`.
 
 ## Adding it to the book series
 
