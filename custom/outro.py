@@ -21,22 +21,43 @@ PURPLE_LIGHT = "#A15FE4"
 CHROME = "#C8CDD4"
 CHROME_DARK = "#8E959E"
 
-# Node positions read off the badge, in units of the disc radius
+# The neural-E: eight nodes laid out as a capital E -- a left spine (A-D-F)
+# with top / middle / bottom bars -- overlaid with a synaptic mesh.  Positions
+# are in units of the disc radius and are mirror-symmetric top-to-bottom
+# (A<->F, B<->G, C<->H; D and E on the axis), so the E reads as a clean,
+# balanced letter rather than a scattered blob.
+#
+#   A --- B --- C      top bar      (y = +0.42)
+#   |
+#   D --------- E      middle bar   (y =  0.00)
+#   |
+#   F --- G --- H      bottom bar   (y = -0.42)
+#
 LOGO_NODES = [
-    (0.44, 0.60),    # 0 top
-    (0.72, 0.34),    # 1 upper right
-    (-0.04, 0.03),   # 2 left, against the N
-    (0.46, 0.05),    # 3 centre
-    (0.74, 0.04),    # 4 right
-    (0.25, -0.30),   # 5 lower left
-    (0.68, -0.28),   # 6 lower right
-    (0.38, -0.58),   # 7 bottom
+    (0.06,  0.42),   # 0  A  top spine / top-bar left
+    (0.40,  0.44),   # 1  B  top-bar middle
+    (0.71,  0.39),   # 2  C  top-bar right
+    (0.06,  0.00),   # 3  D  mid spine / middle-bar left
+    (0.55,  0.00),   # 4  E  middle-bar right (hub)
+    (0.06, -0.42),   # 5  F  bottom spine / bottom-bar left
+    (0.40, -0.44),   # 6  G  bottom-bar middle
+    (0.71, -0.39),   # 7  H  bottom-bar right
 ]
 LOGO_EDGES = [
-    (0, 1), (0, 3), (1, 3), (1, 4), (2, 0), (2, 3), (2, 5),
-    (3, 4), (3, 5), (3, 6), (3, 7), (5, 6), (5, 7), (6, 7),
+    # Structural E: spine + three bars
+    (0, 3), (3, 5),                    # spine  A-D-F
+    (0, 1), (1, 2),                    # top bar    A-B-C
+    (3, 4),                            # middle bar D-E
+    (5, 6), (6, 7),                    # bottom bar F-G-H
+    # Synaptic mesh -- added in mirror pairs so the graph stays symmetric
+    (0, 2), (5, 7),                    # A-C / F-H
+    (0, 4), (4, 5),                    # A-E / E-F
+    (1, 3), (3, 6),                    # B-D / D-G
+    (1, 4), (4, 6),                    # B-E / E-G
+    (2, 4), (4, 7),                    # C-E / E-H
+    (2, 3), (3, 7),                    # C-D / D-H
 ]
-LOGO_RADII = [0.095, 0.100, 0.075, 0.095, 0.090, 0.090, 0.095, 0.088]
+LOGO_RADII = [0.075] * 8
 
 
 def n_glyph(width: float = 0.70, height: float = 0.90, stem: float = 0.22,

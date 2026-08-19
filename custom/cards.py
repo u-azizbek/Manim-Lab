@@ -103,8 +103,26 @@ class CardSolutionScene(StepListMixin, ShortsScene):
     def get_card(self) -> ProblemCard:
         return self.lazy("card", self.make_card)
 
-    def show_problem(self, run_time: float = 1.6):
+    def show_problem(self, run_time: float = 1.6, hold: float = 1.0,
+                     rise_time: float = 0.9):
+        """Introduce the problem centred in the frame, let the viewer read it,
+        then glide it up to its pinned spot so the steps have room below.
+
+        `make_card` already positions the card at its final (top) resting
+        place -- and `steps_top_y` is measured from there -- so we stash that
+        centre, play the intro from the middle, and animate back to it.
+
+        `.copy()` on the stashed centre is essential: `get_center()` hands back
+        a live view into the mobject's own bounding box, which `move_to` then
+        overwrites in place -- without the copy the target silently becomes
+        ORIGIN and the card never leaves the middle of the frame.
+        """
         card = self.make_card()
+        settled_center = card.get_center().copy()
+
+        # Centre it for the introduction
+        card.move_to(ORIGIN)
+
         self.play(
             FadeIn(card.rect, scale=0.97),
             run_time=0.6,
@@ -113,5 +131,9 @@ class CardSolutionScene(StepListMixin, ShortsScene):
         extras = [m for m in (card.logo, card.tag) if m is not None and len(m) > 0]
         if extras:
             self.play(*[FadeIn(m) for m in extras], run_time=0.5)
-        self.wait(0.4)
+        self.wait(hold)
+
+        # Settle it up to the top, freeing the lower frame for the steps
+        self.play(card.animate.move_to(settled_center), run_time=rise_time)
+        self.wait(0.3)
         return self.set_state("card", card)
