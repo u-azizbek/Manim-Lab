@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import os
 
-from manimlib.constants import BLACK, DOWN, UP, WHITE, YELLOW
+from manimlib.constants import BLACK, DOWN, GREY_B, UP, WHITE, YELLOW
 from manimlib.animation.fading import FadeIn, FadeOut
 from manimlib.animation.transform import TransformFromCopy
+from manimlib.animation.transform_matching_parts import TransformMatchingTex
 from manimlib.mobject.svg.tex_mobject import Tex
+from manimlib.mobject.svg.text_mobject import Text
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.mobject.mobject import Mobject
 from manimlib.scene.interactive_scene import InteractiveScene
@@ -91,6 +93,7 @@ class StepListMixin:
 
     step_color = WHITE
     result_color = YELLOW
+    note_color = GREY_B      # the one-line "which rule is this" callouts
     steps_top_y = -0.7
     step_buff = 0.34
     step_font_size = 36
@@ -135,6 +138,62 @@ class StepListMixin:
         self.play(TransformFromCopy(source, line), run_time=run_time)
         if wait:
             self.wait(wait)
+        return line
+
+    def note(self, message: str, font_size: int = 28, run_time: float = 0.6,
+             wait: float = 1.6, keep: bool = False) -> Mobject | None:
+        """One short sentence naming the rule or theorem being applied.
+
+        Every short should say *why* a step is allowed -- "Leibniz rule",
+        "integrate by parts" -- not just show the algebra.  The sentence takes
+        the next step slot while it is read and then clears itself, so naming
+        the rule costs no permanent room in the frame.  Pass `keep=True` to
+        leave it on screen as a normal step.
+        """
+        line = Text(message, font_size=font_size)
+        line.set_color(self.note_color)
+        line.set_max_width(self.step_max_width)
+        self.place_step(line)
+        self.play(FadeIn(line, 0.15 * DOWN), run_time=run_time)
+        if wait:
+            self.wait(wait)
+        if keep:
+            self.steps().add(line)
+            return line
+        self.play(FadeOut(line, 0.15 * UP), run_time=0.4)
+        return None
+
+    def replace_step(self, source: Mobject, tex: str, color=None,
+                     font_size: int | None = None, key_map: dict = {},
+                     matched_keys=(), run_time: float = 1.3,
+                     wait: float = 0.6, **kwargs) -> Mobject:
+        """Rewrite a line where it already sits, rather than stacking a new
+        one underneath it.
+
+        Long derivations run out of frame fast in 9:16, so working that is
+        only a stepping stone should be rewritten in place; only results worth
+        keeping should earn their own slot.  Matching parts are carried across
+        so the change reads as a move rather than a cut.
+        """
+        line = Tex(tex, font_size=font_size or self.step_font_size, **kwargs)
+        line.set_color(color or self.step_color)
+        line.set_max_width(self.step_max_width)
+        line.move_to(source)
+        self.play(
+            TransformMatchingTex(
+                source, line,
+                key_map=key_map, matched_keys=list(matched_keys),
+            ),
+            run_time=run_time,
+        )
+        if wait:
+            self.wait(wait)
+        # Keep the step list pointing at what is on screen, in the same
+        # position, so later steps stack under the replacement
+        lines = list(self.steps().submobjects)
+        if source in lines:
+            lines[lines.index(source)] = line
+            self.steps().set_submobjects(lines)
         return line
 
     def clear_steps(self, run_time: float = 0.6):
