@@ -165,7 +165,7 @@ class StepListMixin:
 
     def replace_step(self, source: Mobject, tex: str, color=None,
                      font_size: int | None = None, key_map: dict = {},
-                     matched_keys=(), run_time: float = 1.3,
+                     matched_keys=(), colors: dict = {}, run_time: float = 1.3,
                      wait: float = 0.6, **kwargs) -> Mobject:
         """Rewrite a line where it already sits, rather than stacking a new
         one underneath it.
@@ -174,9 +174,15 @@ class StepListMixin:
         only a stepping stone should be rewritten in place; only results worth
         keeping should earn their own slot.  Matching parts are carried across
         so the change reads as a move rather than a cut.
+
+        `colors` maps substrings to colours, for lines whose parts are colour
+        coded (they are isolated automatically).
         """
-        line = Tex(tex, font_size=font_size or self.step_font_size, **kwargs)
+        isolate = [*kwargs.pop("isolate", []), *colors]
+        line = Tex(tex, font_size=font_size or self.step_font_size, isolate=isolate, **kwargs)
         line.set_color(color or self.step_color)
+        for key, part_color in colors.items():
+            line[key].set_color(part_color)
         line.set_max_width(self.step_max_width)
         line.move_to(source)
         self.play(
