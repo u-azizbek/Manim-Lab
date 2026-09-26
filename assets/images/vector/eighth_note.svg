@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 300" width="220" height="300">
+  <!-- An eighth note drawn as one closed outline: stem, flag, then the
+       tilted note head, so the Fourier pen can trace it in a single loop. -->
+  <path fill="#ffffff" d="
+    M 101 20
+    L 114 20
+    C 118 62, 150 86, 170 120
+    C 192 158, 188 206, 166 238
+    C 178 200, 172 166, 148 146
+    C 136 136, 122 128, 114 122
+    L 114.5 232
+    A 42 28 -22 1 1 101 223.2
+    Z" />
+</svg>

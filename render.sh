@@ -42,7 +42,8 @@ ${bold}Options:${reset}
                         separated).  Requires a ShortsScene subclass; other
                         sections are filled in statically so any one renders
                         on its own.
-  -q, --quality NAME    shorts  1080x1920  portrait, final  (default)
+  -q, --quality NAME    shorts  1080x1920  portrait, final  (default, unless
+                                  the file sets RENDER_QUALITY = "hd")
                         draft    540x960   portrait, fast iteration
                         4k      2160x3840  portrait, high res
                         hd      1920x1080  landscape
@@ -66,7 +67,7 @@ EOF
 }
 
 sections=""
-quality="shorts"
+quality=""
 preview=false
 presenter=false
 embed_line=""
@@ -182,6 +183,13 @@ if [[ -z "$scene" ]]; then
         echo "$found" | sed 's/^/  /' >&2
         exit 1
     fi
+fi
+
+# A landscape file can declare its own default with a module-level
+# RENDER_QUALITY = "hd"; an explicit -q still wins
+if [[ -z "$quality" ]]; then
+    quality="$(sed -n 's/^RENDER_QUALITY[[:space:]]*=[[:space:]]*["'"'"']\([^"'"'"']*\)["'"'"'].*/\1/p' "$file" | head -1)"
+    quality="${quality:-shorts}"
 fi
 
 case "$quality" in
