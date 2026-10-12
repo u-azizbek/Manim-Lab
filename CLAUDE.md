@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is the 3Blue1Brown video creation repository containing the Python code used to generate the mathematical animations and visualizations for the 3Blue1Brown YouTube channel. The project is built on top of the Manim animation library (specifically the 3b1b version, not the community edition).
 
+## YouTube Shorts
+
+Whenever the user asks for a short (or any vertical video), follow the
+`manim-shorts` skill in `.claude/skills/manim-shorts/SKILL.md`. It is the
+default house style. Deviate only where the user explicitly asks to.
+
 ## Key Commands
 
 ### Running Scenes

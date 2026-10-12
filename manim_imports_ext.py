@@ -20,3 +20,5 @@ from custom.cards import *
 from custom.matrix_kit import *
 from custom.mock_tests import *
 from custom.fourier_kit import *
+from custom.hooks import *
+from custom.narration import *

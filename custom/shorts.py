@@ -38,6 +38,10 @@ class ShortsScene(InteractiveScene):
     # Section methods, in the order construct should run them
     sections: list[str] = []
 
+    # What goes in the YouTube upload form, written next to the video as
+    # <Scene>.upload.txt:  dict(title=..., description=..., hashtags=[...])
+    upload: dict = {}
+
     def setup(self) -> None:
         super().setup()
         self.camera.background_color = self.background_color
@@ -47,6 +51,35 @@ class ShortsScene(InteractiveScene):
     def construct(self) -> None:
         for name in self.get_requested_sections():
             getattr(self, name)()
+
+    def tear_down(self) -> None:
+        super().tear_down()
+        self.write_sidecars()
+
+    # Files written next to the video
+
+    def get_video_path(self) -> str | None:
+        """Where the video was written, or None for a preview."""
+        writer = self.file_writer
+        if not writer.write_to_movie:
+            return None
+        return str(writer.get_movie_file_path())
+
+    def write_sidecars(self) -> None:
+        video = self.get_video_path()
+        if video is None or not self.upload:
+            return
+        stem = os.path.splitext(video)[0]
+        info = self.upload
+        lines = [
+            f"TITLE\n{info.get('title', '')}",
+            f"DESCRIPTION\n{info.get('description', '')}",
+            "HASHTAGS\n" + " ".join(info.get("hashtags", [])),
+        ]
+        if info.get("pinned_comment"):
+            lines.append(f"PINNED COMMENT\n{info['pinned_comment']}")
+        with open(stem + ".upload.txt", "w") as file:
+            file.write("\n\n".join(lines) + "\n")
 
     def get_requested_sections(self) -> list[str]:
         requested = os.environ.get("SECTIONS", "").strip()
