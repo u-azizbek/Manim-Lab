@@ -14,6 +14,7 @@ CAPTION_COLORS = {
     "y": "#FFE14D",          # yellow: the key phrase of the line
     "b": "#58C4DD",          # blue: the second idea, or the object being named
     "p": PURPLE_LIGHT,       # neuro purple: the twist, or the channel's own words
+    "o": "#FF9F43",
     "g": "#5BD98A",
     "r": "#FF6B6B",
     "w": WHITE,
